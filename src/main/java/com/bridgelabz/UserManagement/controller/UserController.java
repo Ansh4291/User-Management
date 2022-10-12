@@ -10,6 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import java.util.List;
+
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -34,7 +37,7 @@ public class UserController {
     /**
      * Get Api for Forgot password with email*/
     @GetMapping("/forgotpassword/{email}")
-    public ResponseEntity<ResponseDTO> forgotPasswordByemail(@PathVariable String email) {
+    public ResponseEntity<ResponseDTO> forgotPasswordByEmail(@PathVariable String email) {
         String response = iuserService.forgotPassword(email);
         ResponseDTO respDTO = new ResponseDTO("*** Link send successfully ***", response);
         return new ResponseEntity<>(respDTO, HttpStatus.OK);
@@ -58,5 +61,26 @@ public class UserController {
     public ResponseEntity<ResponseDTO> verifyUser(@PathVariable String token){
         ResponseDTO responseDTO = new ResponseDTO("User verified successfully", iuserService.verifyUser(token));
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+    }
+
+    @GetMapping("/getAllUser")
+    public ResponseEntity<ResponseDTO> getAllUsers() {
+        List<User> newUser = iuserService.getAllUsers();
+        ResponseDTO responseDTO = new ResponseDTO("All Users records retrieved successfully !", newUser);
+        return new ResponseEntity(responseDTO, HttpStatus.OK);
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<ResponseDTO> editData(@PathVariable int id, @Valid @RequestBody UserDTO userDto) {
+        String response = iuserService.editById(id, userDto);
+        ResponseDTO responseDTO = new ResponseDTO("Updated Book Details Successfully", response);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+    }
+
+    @GetMapping("/getGroupByAge")
+    public ResponseEntity<ResponseDTO> getAllUsersByAge() {
+        List<User> newUser = iuserService.getAllUsersByAge();
+        ResponseDTO responseDTO = new ResponseDTO("All Users Age records retrieved successfully !", newUser);
+        return new ResponseEntity(responseDTO, HttpStatus.OK);
     }
 }

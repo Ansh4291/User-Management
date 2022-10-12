@@ -1,6 +1,5 @@
 package com.bridgelabz.UserManagement.service;
 
-import antlr.Token;
 import com.bridgelabz.UserManagement.dto.LoginDTO;
 import com.bridgelabz.UserManagement.dto.UserDTO;
 import com.bridgelabz.UserManagement.exeptions.UserException;
@@ -11,6 +10,7 @@ import com.bridgelabz.UserManagement.util.TokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -31,18 +31,18 @@ public class UserService implements IUserService{
     }
 
     @Override
+    public User  getUserDataById(String token) {
+        int id = tokenUtil.decodeToken(token);
+        return userRepository.findById(id).orElseThrow(() -> new UserException
+                ("Employee id  " + id + " note Found "));
+    }
+
+    @Override
     public User verifyUser(String token) {
         User user = this.getUserDataById(token);
         user.setVerified(true);
         userRepository.save(user);
         return user;
-    }
-
-    @Override
-    public User  getUserDataById(String token) {
-        int id = tokenUtil.decodeToken(token);
-        return userRepository.findById(id).orElseThrow(() -> new UserException
-                ("Employee id  " + id + " note Found "));
     }
 
     @Override
@@ -80,6 +80,40 @@ public class UserService implements IUserService{
             return "Password Changed";
         } else
             return "Invalid Email Address";
+    }
+
+    @Override
+    public List<User> getAllUsers() {
+        List<User> users = userRepository.findAll();
+        return users;
+    }
+
+    @Override
+    public String editById(int id, UserDTO userDto) {
+        User editUser = userRepository.findById(id).orElse(null);
+        if (editUser != null) {
+            editUser.setFirstName(userDto.getFirstName());
+            editUser.setMiddleName(userDto.getMiddleName());
+            editUser.setLastName(userDto.getLastName());
+            editUser.setAge(userDto.getAge());
+            editUser.setGender(userDto.getGender());
+            editUser.setContactNo(userDto.getContactNo());
+            editUser.setEmailId(userDto.getEmailId());
+            editUser.setPassword(userDto.getPassword());
+            editUser.setAddress(userDto.getAddress());
+            editUser.setRole(userDto.getRole());
+            userRepository.save(editUser);
+            String token = tokenUtil.createToken(editUser.getId());
+            emailSenderService.sendEmail(editUser.getEmailId(), "Added Your Details", "http://localhost:8081/user/verify/" + token);
+            return token;
+        } else
+            throw new UserException("Id:" + id + " is not present ");
+    }
+
+    @Override
+    public List<User> getAllUsersByAge() {
+        List<User> users = userRepository.findByAge();
+        return users;
     }
 
 }
