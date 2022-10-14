@@ -20,6 +20,7 @@ public class UserDTO {
     String password;
     String address;
     String role;
+    String profilePic;
     LocalDateTime createdTimeStamp = LocalDateTime.now();
     LocalDateTime updatedTimeStamp = LocalDateTime.now();
 }

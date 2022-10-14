@@ -12,6 +12,24 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Query(value = "SELECT * FROM user WHERE email_id = :email", nativeQuery = true)
     User findByEmail(String email);
 
-    @Query(value = "SELECT * FROM user WHERE age between 18 and 24", nativeQuery = true)
+    @Query(value = "SELECT * FROM user WHERE age <18", nativeQuery = true)
+    List<User> getGroupByAgeUnder18();
+
+    @Query(value = "SELECT * FROM user WHERE age between 18 and 40", nativeQuery = true)
     List<User> findByAge();
+
+    @Query(value = "SELECT * FROM user WHERE age >40", nativeQuery = true)
+    List<User> getGroupByAgeAbove40();
+
+    @Query(value = "SELECT * FROM user WHERE address LIKE :address%", nativeQuery = true)
+    List<User> findByAddress(String address);
+
+    @Query(value = "SELECT * FROM user WHERE  gender = :gender", nativeQuery = true)
+    List<User> findByGender(String gender);
+
+    @Query(value = "SELECT * FROM user ORDER BY created_time_stamp DESC LIMIT 1 ", nativeQuery = true)
+    List<User> getRecentRegistration();
+
+    @Query(value = "SELECT * FROM user ORDER BY created_time_stamp  ", nativeQuery = true)
+    List<User> getAllRegistration();
 }

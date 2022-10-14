@@ -29,6 +29,7 @@ public class User {
     String password;
     String address;
     String role;
+    String profilePic;
     LocalDateTime createdTimeStamp = LocalDateTime.now();
     LocalDateTime updatedTimeStamp = LocalDateTime.now();
     private boolean verified = false;
@@ -44,7 +45,9 @@ public class User {
         this.password=userDTO.getPassword();
         this.address=userDTO.getAddress();
         this.role=userDTO.getRole();
+        this.profilePic=userDTO.getProfilePic();
         this.createdTimeStamp=userDTO.getCreatedTimeStamp();
         this.updatedTimeStamp=userDTO.getUpdatedTimeStamp();
     }
+
 }
