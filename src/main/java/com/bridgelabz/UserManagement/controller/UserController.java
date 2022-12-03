@@ -150,4 +150,12 @@ public class UserController {
         ResponseDTO responseDto = new ResponseDTO("*** Profile picture of user  on this id using Id***", response);
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
+
+    @PutMapping("/logout/{userId}")
+    public ResponseEntity<ResponseDTO> logoutUser(@PathVariable int userId ) {
+        User response= iuserService.logout(userId);
+        ResponseDTO responseDto=new ResponseDTO("Logout Successfully",response);
+        return new ResponseEntity<>(responseDto,HttpStatus.OK);
+
+    }
 }

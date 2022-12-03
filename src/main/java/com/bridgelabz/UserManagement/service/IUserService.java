@@ -43,4 +43,6 @@ public interface IUserService {
     List<LoginHistory> getLoginHistory(String email);
 
     String findProfilePic(int id);
+
+    User logout(int userId);
 }

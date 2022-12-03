@@ -56,26 +56,35 @@ public class UserService implements IUserService{
     }
 
     @Override
-    public User loginUser(LoginDTO loginDTO) {
-        Optional<User> userDetails = Optional.ofNullable(userRepository.findByEmail(loginDTO.getEmail()));
+    public User loginUser(LoginDTO loginDto) {
+        Optional<User> userDetails = Optional.ofNullable(userRepository.findByEmail(loginDto.getEmail()));
         if (userDetails.isPresent()) {
             boolean userDetails1 = userDetails.get().isVerified();
-            //String pass = login.get().getPassword();
-            if (userDetails.get().getPassword().equals(loginDTO.getPassword()) && userDetails1 == true) {
-                LocalDateTime loginDateTime = LocalDateTime.now();
-                LoginHistory loginHistory = new LoginHistory();
-                loginHistory.setLoginDataTime(loginDateTime);
-                loginHistory.setEmailId(loginDTO.getEmail());
-                loginHistory.setId(userDetails.get().getId());
-                loginHistoryRepo.save(loginHistory);
-                emailSenderService.sendEmail(userDetails.get().getEmailId(), "About Login", "Login Successful!");
-                return userDetails.get();
+            if (userDetails1 == true) {
+                //String pass = login.get().getPassword();
+                if (userDetails.get().getPassword().equals(loginDto.getPassword())) {
+                    LocalDateTime loginDateTime = LocalDateTime.now();
+                    LoginHistory loginHistorys = new LoginHistory();
+                    loginHistorys.setLoginDataTime(loginDateTime);
+                    loginHistorys.setEmailId(loginDto.getEmail());
+                    loginHistorys.setId(userDetails.get().getId());
+                    userDetails.get().setStatus(true);
+                    userRepository.save(userDetails.get());
+                    loginHistoryRepo.save(loginHistorys);
+                    emailSenderService.sendEmail(userDetails.get().getEmailId(), "About Login", "Login Successful!");
+                    return userDetails.get();
+
+                } else
+                    emailSenderService.sendEmail(userDetails.get().getEmailId(), "About Login", "Invalid password!");
+                throw new UserException("Wrong Password!");
             } else
-                emailSenderService.sendEmail(userDetails.get().getEmailId(), "About Login", "Invalid password!");
-            throw new UserException("Wrong Password!");
+                emailSenderService.sendEmail(userDetails.get().getEmailId(), "About Login", "User is present but not valid!");
+            throw new UserException("user is present but not verified!");
+
         } else
             throw new UserException("Login Failed, Wrong email or password!!!");
     }
+
 
     @Override
     public String forgotPassword(String email) {
@@ -210,4 +219,14 @@ public class UserService implements IUserService{
         }
     }
 
+    @Override
+    public User logout(int userId) {
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isPresent()) {
+            user.get().setStatus(false);
+            userRepository.save(user.get());
+            return user.get();
+        } else
+            throw new UserException("user id is not present");
+    }
 }

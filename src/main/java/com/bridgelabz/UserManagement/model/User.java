@@ -33,6 +33,7 @@ public class User {
     LocalDateTime createdTimeStamp = LocalDateTime.now();
     LocalDateTime updatedTimeStamp = LocalDateTime.now();
     private boolean verified = false;
+    private boolean status = false;
 
     public User(UserDTO userDTO){
         this.firstName=userDTO.getFirstName();
